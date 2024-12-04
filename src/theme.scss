@@ -5,18 +5,21 @@
 $my-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: mat.$azure-palette,
+    primary: mat.$blue-palette,
   ),
 ));
 
 html {
-  // Emit theme-dependent styles for common features used across multiple components.
   @include mat.core-theme($my-theme);
 
-  // Emit styles for MatButton based on `$my-theme`. Because the configuration
-  // passed to `define-theme` omits typography, `button-theme` will not
-  // emit any typography styles.
-  @include mat.button-theme($my-theme);
+  @include mat.all-component-themes($my-theme);
+  @include mat.color-variants-backwards-compatibility($my-theme);
+  @include mat.typography-hierarchy($my-theme);
 
-  // Include the theme mixins for other components you use here.
+}
+
+@mixin theme($my-theme) {
+  mat-toolbar {
+    background: mat.get-theme-color($my-theme, primary-container);
+  }
 }

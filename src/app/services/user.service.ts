@@ -1,27 +1,44 @@
-import { Injectable } from '@angular/core';
-import { Todo } from "../interfaces/todo";
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { User } from "../interfaces/user";
-import { Observable, tap } from "rxjs";
+import { tap } from "rxjs";
+import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  users$!: Observable<User[]>;
+  readonly http = inject(HttpClient);
+  readonly router = inject(Router);
+
+  users!: User[];
 
   private URL = 'https://jsonplaceholder.typicode.com/users';
-
-  constructor(private http: HttpClient) {
-  }
+  private user = '';
 
 
   load(): void {
-    console.error('load');
-
-    this.users$ = this.http.get<User[]>(this.URL)
+    this.http.get<User[]>(this.URL)
       .pipe(
-        tap(console.error)
-      );
+        tap(users => this.users = users)
+      ).subscribe();
+  }
+
+  login(user: string) {
+    this.user = user;
+    this.router.navigateByUrl('/home').then();
+  }
+
+  authenticated() {
+    return !!this.user;
+  }
+
+  hasAccess(email: string): boolean {
+    return !!this.users.find(user => user.email === email);
+  }
+
+  getUserId(): number {
+    const currentUser = this.users.find(user => user.email === this.user);
+    return currentUser?.id ?? 0;
   }
 }

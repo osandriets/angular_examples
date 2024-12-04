@@ -1,0 +1,13 @@
+:host {
+  padding: 32px;
+  display: block;
+
+  .completed {
+    color: gray;
+    text-decoration: line-through;
+  }
+
+  .mb-32 {
+    margin-bottom: 32px;
+  }
+}

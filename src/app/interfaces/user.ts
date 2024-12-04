@@ -1,6 +1,8 @@
 export interface User {
-  id: number;
-  userId: number;
-  title: string;
-  completed: boolean;
+  email: string
+  id: number,
+  name: string,
+  phone: string,
+  username: string
+  website: string
 }

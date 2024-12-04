@@ -1,22 +1,18 @@
-<mat-toolbar color="primary">
-  <span>My TODO list</span>
-  <span class="example-spacer"></span>
+@if (userService.authenticated()) {
+  <mat-toolbar color="primary">
+    <span>My TODO list</span>
+    <span class="spacer"></span>
 
-  <button mat-raised-button
-          routerLink="home">
-    Home
-  </button>
+    <button mat-button
+            routerLink="home">
+      Home
+    </button>
 
-  <button mat-raised-button
-          routerLink="about">
-    About
-  </button>
-</mat-toolbar>
-
-
-<!--<mat-toolbar-row>-->
-<!--  <span>Custom Toolbar</span>-->
-<!--</mat-toolbar-row>-->
-
+    <button mat-button
+            routerLink="about">
+      About
+    </button>
+  </mat-toolbar>
+}
 
 <router-outlet></router-outlet>

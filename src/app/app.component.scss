@@ -1,6 +1,11 @@
-$mat-primary: red;
+:host {
+  .spacer {
+    flex: 1 1 auto;
+  }
 
-mat-toolbar[color="primary"] {
-  --mat-toolbar-container-background-color: red;
-  //--mat-toolbar-container-text-color: ;
+  .mat-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 }

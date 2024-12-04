@@ -1,3 +1,25 @@
-<p>log-in works!</p>
+<h1>Login! Enter your email</h1>
 
-{{this.users$ | async | json}}
+<h6 class="text-warn">{{message}} &nbsp;</h6>
+
+<mat-card appearance="outlined"
+          style="width: 600px">
+  <mat-card-content>
+    <mat-form-field appearance="outline">
+      <mat-label>
+        Input
+      </mat-label>
+      <input matInput
+             name="email"
+             type="text"
+             [(ngModel)]="email">
+    </mat-form-field>
+
+    <button mat-button
+            (click)="onLogIn()">
+      Login
+    </button>
+  </mat-card-content>
+</mat-card>
+
+

@@ -1,30 +1,41 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UserService } from "../../services/user.service";
-import { Observable } from "rxjs";
-import { User } from "../../interfaces/user";
-import { Todo } from "../../interfaces/todo";
-import { AsyncPipe, JsonPipe } from "@angular/common";
+import { MatFormField, MatFormFieldModule } from "@angular/material/form-field";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MatInputModule } from "@angular/material/input";
+import { MatCard, MatCardContent } from "@angular/material/card";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   selector: 'app-log-in',
   imports: [
-    AsyncPipe,
-    JsonPipe
+    FormsModule,
+    MatFormField,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCard,
+    MatCardContent,
+    MatButtonModule,
+    ReactiveFormsModule,
   ],
   standalone: true,
   templateUrl: './log-in.component.html',
   styleUrl: './log-in.component.scss'
 })
-export class LogInComponent implements OnInit {
-  users$!: Observable<User[]>
+export class LogInComponent {
+  readonly userService = inject(UserService);
 
-  constructor(
-    private userService: UserService,
-  ) {
-  }
+  email = '';
+  message = '';
 
-  ngOnInit(): void {
-    this.userService.load();
-    this.users$ = this.userService.users$;
+  private errorMessage = "Enter Email or you don't have access";
+
+  onLogIn() {
+    if(this.email && this.userService.hasAccess(this.email)) {
+      this.message = '';
+      this.userService.login(this.email);
+    } else {
+      this.message = this.errorMessage;
+    }
   }
 }
