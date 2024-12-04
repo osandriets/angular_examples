@@ -17,6 +17,16 @@
   </button>
 </div>
 
+@if (tableErrorMessage()) {
+  <p class="text-warn">
+    {{tableErrorMessage()}}
+  </p>
+}
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" value="40"></mat-progress-bar>
+}
+
 <div class="mat-elevation-z8 mb-32">
   <table mat-table
          [dataSource]="dataSource">

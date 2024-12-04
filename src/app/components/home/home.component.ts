@@ -14,6 +14,7 @@ import { MatInputModule } from "@angular/material/input";
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { UserService } from "../../services/user.service";
+import { MatProgressBar } from "@angular/material/progress-bar";
 
 @Component({
   selector: 'app-home',
@@ -27,6 +28,7 @@ import { UserService } from "../../services/user.service";
     MatTableModule,
     MatPaginatorModule,
     ReactiveFormsModule,
+    MatProgressBar,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -41,6 +43,9 @@ export class HomeComponent implements OnInit {
 
   readonly title = new FormControl('', [Validators.required, Validators.max(250)]);
   errorMessage = signal('');
+
+  loading = this.todoService.loading;
+  tableErrorMessage = this.todoService.errorMessage;
 
   displayedColumns: string[] = ['title', 'actions'];
   dataSource = new MatTableDataSource<Todo>([]);
