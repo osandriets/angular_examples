@@ -33,7 +33,7 @@ import { MatIconModule } from "@angular/material/icon";
 })
 export class ModalEditComponent {
   readonly dialogRef = inject(MatDialogRef<ModalEditComponent>);
-  readonly title = new FormControl('', [Validators.required, Validators.max(250)]);
+  readonly title = new FormControl('', [Validators.required, Validators.maxLength(250)]);
   errorMessage = signal('');
 
   constructor(
@@ -45,8 +45,8 @@ export class ModalEditComponent {
   updateErrorMessage(): void {
     if(this.title.hasError('required')) {
       this.errorMessage.set('You must enter a title');
-    } else if(this.title.hasError('max')) {
-      this.errorMessage.set('Title less 250');
+    } else if(this.title.hasError('maxlength')) {
+      this.errorMessage.set('Title maxlength 250');
     } else {
       this.errorMessage.set('Invalid title');
     }

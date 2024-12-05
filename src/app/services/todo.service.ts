@@ -14,23 +14,25 @@ export class TodoService {
   private _data: Subject<Todo[]> = new Subject();
   data$: Observable<Todo[]> = this._data.asObservable();
 
-  private URL = 'https://jsonplaceholder.typicode.com/todos';
-  private data: Todo[] = [];
+  #URL = 'https://jsonplaceholder.typicode.com/todos';
+  #data: Todo[] = [];
 
-  loading = signal(false);
+  #loading = signal(false);
+  loading = this.#loading.asReadonly();
+
   errorMessage = signal('');
 
   constructor() {
-    this.data$.subscribe((d) => this.data = d);
+    this.data$.subscribe((d) => this.#data = d);
   }
 
   load(): void {
-    this.loading.set(true);
+    this.#loading.set(true);
     this.errorMessage.set('');
 
-    this.http.get<Todo[]>(this.URL)
+    this.http.get<Todo[]>(this.#URL)
       .pipe(
-        finalize(() => this.loading.set(false))
+        finalize(() => this.#loading.set(false))
       )
       .subscribe({
         next: (d) => this._data.next(d),
@@ -39,16 +41,16 @@ export class TodoService {
   }
 
   delete(id: number): void {
-    this.loading.set(true);
+    this.#loading.set(true);
     this.errorMessage.set('');
 
-    this.http.delete<Todo>(`${this.URL}/${id}`)
+    this.http.delete<Todo>(`${this.#URL}/${id}`)
       .pipe(
-        finalize(() => this.loading.set(false))
+        finalize(() => this.#loading.set(false))
       )
       .subscribe({
           next: () => {
-            this._data.next(this.data.filter((d: Todo) => d.id !== id));
+            this._data.next(this.#data.filter((d: Todo) => d.id !== id));
           },
           error: () => this.errorMessage.set('Something wrong'),
         }
@@ -56,32 +58,32 @@ export class TodoService {
   }
 
   add(item: Partial<Todo>): void {
-    this.loading.set(true);
+    this.#loading.set(true);
     this.errorMessage.set('');
 
-    this.http.post<Todo>(`${this.URL}`, item)
+    this.http.post<Todo>(`${this.#URL}`, item)
       .pipe(
-        finalize(() => this.loading.set(false))
+        finalize(() => this.#loading.set(false))
       )
       .subscribe({
         next: (result) => {
-          this._data.next([result, ...this.data]);
+          this._data.next([result, ...this.#data]);
         },
         error: () => this.errorMessage.set('Something wrong'),
       });
   }
 
   edit(item: Todo): void {
-    this.loading.set(true);
+    this.#loading.set(true);
     this.errorMessage.set('');
 
-    this.http.put<Todo>(`${this.URL}/${item.id}`, item)
+    this.http.put<Todo>(`${this.#URL}/${item.id}`, item)
       .pipe(
-        finalize(() => this.loading.set(false))
+        finalize(() => this.#loading.set(false))
       )
       .subscribe({
         next: (result) => {
-          this._data.next(this.data.map((d: Todo) => d.id === item.id ? result : d));
+          this._data.next(this.#data.map((d: Todo) => d.id === item.id ? result : d));
         },
         error: () => this.errorMessage.set('Something wrong'),
       });

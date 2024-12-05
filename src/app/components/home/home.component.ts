@@ -41,7 +41,7 @@ export class HomeComponent implements OnInit {
   readonly todoService = inject(TodoService);
   readonly userService = inject(UserService);
 
-  readonly title = new FormControl('', [Validators.required, Validators.max(250)]);
+  readonly title = new FormControl('', [Validators.required, Validators.maxLength(250)]);
   errorMessage = signal('');
 
   loading = this.todoService.loading;
@@ -115,8 +115,8 @@ export class HomeComponent implements OnInit {
   updateErrorMessage() {
     if (this.title.hasError('required')) {
       this.errorMessage.set('You must enter a title');
-    } else if (this.title.hasError('max')) {
-      this.errorMessage.set('Title less 250');
+    } else if (this.title.hasError('maxlength')) {
+      this.errorMessage.set('Title maxlength 250');
     } else {
       this.errorMessage.set('Invalid title');
     }
