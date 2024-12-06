@@ -1,6 +1,6 @@
 <h1>Login! Enter your email</h1>
 
-<h6 class="text-warn">{{message}} &nbsp;</h6>
+<h6 class="text-warn">{{message}} &nbsp; {{userService.errorMessage()}}</h6>
 
 <mat-card appearance="outlined"
           style="width: 600px">
@@ -16,6 +16,7 @@
     </mat-form-field>
 
     <button mat-button
+            [disabled]="userService.loading()"
             (click)="onLogIn()">
       Login
     </button>

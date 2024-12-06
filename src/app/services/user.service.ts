@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { User } from "../interfaces/user";
-import { firstValueFrom, tap } from "rxjs";
+import { firstValueFrom } from "rxjs";
 import { Router } from "@angular/router";
 
 @Injectable({
@@ -11,33 +11,37 @@ export class UserService {
   readonly http = inject(HttpClient);
   readonly router = inject(Router);
 
-  #users = signal<User[]>([]);
   #user = signal<User | null>(null);
   #URL = 'https://jsonplaceholder.typicode.com/users';
 
-  async login(email: string) {
+  #loading = signal(false);
+  loading = this.#loading.asReadonly();
+
+  errorMessage = signal('');
+
+  async login(email: string): Promise<void> {
+    this.#loading.set(true);
+    this.errorMessage.set('');
+
     try {
       const users = await this.loadUsersHttp();
-
-      console.error('users', users);
-
       const user = users.find(user => user.email === email);
       if(user) {
         this.#user.set(user);
         this.router.navigateByUrl('/home').then();
+      } else {
+        this.errorMessage.set('No access');
       }
     } catch (err) {
       console.error('err', err);
+      this.errorMessage.set('Error');
+
+    } finally {
+      this.#loading.set(false);
     }
   }
 
-  authenticated() {
-    const user = this.#user();
-
-    return !!user;
-  }
-
-  hasAccess(email: string): boolean {
+  authenticated(): boolean {
     const user = this.#user();
 
     return !!user;
@@ -46,7 +50,6 @@ export class UserService {
   getUserId(): number {
     const user = this.#user();
 
-    console.error('getUserId', user, user?.id)
     return user?.id || 0;
   }
 
@@ -55,17 +58,5 @@ export class UserService {
     const response = await firstValueFrom(users);
 
     return response;
-  }
-
-  async loadUsers() {
-    try {
-      const users = await this.loadUsersHttp();
-
-      console.error('users', users);
-
-      this.#users.set(users);
-    } catch (err) {
-      console.error('err', err);
-    }
   }
 }
