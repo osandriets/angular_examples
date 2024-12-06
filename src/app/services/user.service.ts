@@ -1,7 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { User } from "../interfaces/user";
-import { tap } from "rxjs";
+import { firstValueFrom, tap } from "rxjs";
 import { Router } from "@angular/router";
 
 @Injectable({
@@ -11,34 +11,61 @@ export class UserService {
   readonly http = inject(HttpClient);
   readonly router = inject(Router);
 
-  users!: User[];
+  #users = signal<User[]>([]);
+  #user = signal<User | null>(null);
+  #URL = 'https://jsonplaceholder.typicode.com/users';
 
-  private URL = 'https://jsonplaceholder.typicode.com/users';
-  private user = '';
+  async login(email: string) {
+    try {
+      const users = await this.loadUsersHttp();
 
+      console.error('users', users);
 
-  load(): void {
-    this.http.get<User[]>(this.URL)
-      .pipe(
-        tap(users => this.users = users)
-      ).subscribe();
-  }
-
-  login(user: string) {
-    this.user = user;
-    this.router.navigateByUrl('/home').then();
+      const user = users.find(user => user.email === email);
+      if(user) {
+        this.#user.set(user);
+        this.router.navigateByUrl('/home').then();
+      }
+    } catch (err) {
+      console.error('err', err);
+    }
   }
 
   authenticated() {
-    return !!this.user;
+    const user = this.#user();
+
+    return !!user;
   }
 
   hasAccess(email: string): boolean {
-    return !!this.users.find(user => user.email === email);
+    const user = this.#user();
+
+    return !!user;
   }
 
   getUserId(): number {
-    const currentUser = this.users.find(user => user.email === this.user);
-    return currentUser?.id ?? 0;
+    const user = this.#user();
+
+    console.error('getUserId', user, user?.id)
+    return user?.id || 0;
+  }
+
+  async loadUsersHttp(): Promise<User[]> {
+    const users = this.http.get<User[]>(this.#URL);
+    const response = await firstValueFrom(users);
+
+    return response;
+  }
+
+  async loadUsers() {
+    try {
+      const users = await this.loadUsersHttp();
+
+      console.error('users', users);
+
+      this.#users.set(users);
+    } catch (err) {
+      console.error('err', err);
+    }
   }
 }

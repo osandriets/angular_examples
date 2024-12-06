@@ -22,6 +22,6 @@ export class AppComponent implements OnInit{
   readonly userService = inject(UserService);
 
   ngOnInit(): void {
-    this.userService.load();
+    // this.userService.loadUsers().then();
   }
 }

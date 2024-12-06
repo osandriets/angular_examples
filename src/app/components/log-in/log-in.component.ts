@@ -31,9 +31,9 @@ export class LogInComponent {
   private errorMessage = "Enter Email or you don't have access";
 
   onLogIn() {
-    if(this.email && this.userService.hasAccess(this.email)) {
+    if(this.email) {
       this.message = '';
-      this.userService.login(this.email);
+      this.userService.login(this.email).then();
     } else {
       this.message = this.errorMessage;
     }
